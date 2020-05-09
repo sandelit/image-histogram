@@ -26,14 +26,15 @@ function handleImage(e) {
 }
 
 function handleData(data) {
-    //Array of all red/green/blue pixels
     let red = loopData(0, data);
     let green = loopData(1, data);
     let blue = loopData(2, data);
 
     if (isBlackWhite(red, green, blue)) {
+        let dataArr = red;
         console.log('its black and white');
-        drawHistogram(red);
+        dataArr = valueOccurences(dataArr);
+        drawHistogram(dataArr);
     } else {
         console.log('its colorateded');
     }
@@ -55,11 +56,29 @@ function isBlackWhite(red, green, blue) {
     else return false;
 }
 
+function valueOccurences(array) {
+    var a = [],
+        b = [],
+        prev;
+
+    array.sort();
+    for (let i = 0; i < array.length; i++) {
+        if (array[i] !== prev) {
+            a.push(array[i]);
+            b.push(1);
+        } else {
+            b[b.length - 1]++;
+        }
+        prev = array[i];
+    }
+    return b;
+}
+
 function drawHistogram(barData) {
     let height = window.innerHeight / 2;
     let width = window.innerWidth / 2;
     const barOffset = 5;
-
+    console.log(barData);
     /*Creates an array with values between x & y, range(0, 3) -> [0, 1, 2, 3]
     Used to create 256 bars with values 0 => 255
     stackoverflow.com/questions/3895478/does-javascript-have-a-method-like-range-to-generate-a-range-within-the-supp */
@@ -69,7 +88,7 @@ function drawHistogram(barData) {
                 while (x <= y) yield x++;
             })()
         );
-    let BARS = RANGE(0, 255);
+    const BARS = RANGE(0, 255);
 
     // "Reset" the bars so they can be readded in a different size on resize
     d3.select('svg').remove('rect');
