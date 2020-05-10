@@ -1,5 +1,4 @@
 window.onload = drawHistogram();
-
 // Creates canvas and checks for file input
 const inputImage = document.getElementById('imageInput');
 const canvas = document.getElementById('canvasImage');
@@ -33,10 +32,14 @@ function handleData(data) {
     if (isBlackWhite(red, green, blue)) {
         let dataArr = red;
         console.log('its black and white');
-        dataArr = valueOccurences(dataArr);
-        drawHistogram(dataArr);
+        bw = valueFrequency(dataArr);
+        drawHistogram({ bw });
     } else {
         console.log('its colorateded');
+        red = valueFrequency(red);
+        green = valueFrequency(green);
+        blue = valueFrequency(blue);
+        drawHistogram({ red, green, blue });
     }
 }
 
@@ -56,15 +59,13 @@ function isBlackWhite(red, green, blue) {
     else return false;
 }
 
-function valueOccurences(array) {
-    var a = [],
-        b = [],
+function valueFrequency(array) {
+    let b = [],
         prev;
 
     array.sort();
     for (let i = 0; i < array.length; i++) {
         if (array[i] !== prev) {
-            a.push(array[i]);
             b.push(1);
         } else {
             b[b.length - 1]++;
@@ -74,47 +75,69 @@ function valueOccurences(array) {
     return b;
 }
 
-function drawHistogram(barData) {
-    let height = window.innerHeight / 2;
-    let width = window.innerWidth / 2;
-    const barOffset = 5;
-    console.log(barData);
-    /*Creates an array with values between x & y, range(0, 3) -> [0, 1, 2, 3]
-    Used to create 256 bars with values 0 => 255
-    stackoverflow.com/questions/3895478/does-javascript-have-a-method-like-range-to-generate-a-range-within-the-supp */
-    const RANGE = (x, y) =>
-        Array.from(
-            (function* () {
-                while (x <= y) yield x++;
-            })()
-        );
-    const BARS = RANGE(0, 255);
-
-    // "Reset" the bars so they can be readded in a different size on resize
+function drawHistogram(data) {
     d3.select('svg').remove('rect');
 
-    if (barData != null) {
-        let yScale = d3
+    if (data != null) {
+        if (data.bw != null) {
+            drawSVG();
+            drawBars(data.bw, 'black');
+        } else {
+            drawSVG();
+            drawBars(data.red, 'red');
+            drawBars(data.green, 'green');
+            drawBars(data.blue, 'blue');
+        }
+    }
+}
+
+function drawSVG() {
+    const height = window.innerHeight / 2;
+    const width = window.innerWidth / 2;
+    d3.select('#canvasHistogram')
+        .append('svg')
+        .attr('width', width)
+        .attr('height', height)
+        .style('background', 'lightgray');
+}
+
+function drawBars(data, colour) {
+    const height = window.innerHeight / 2;
+    const width = window.innerWidth / 2;
+    console.log(colour + ' bars should be drawn');
+    const barOffset = 5,
+        yScale = d3
             .scaleLinear()
-            .domain([0, d3.max(barData) + barOffset])
-            .range([0, height]);
-        let xScale = d3
-            .scaleBand()
-            .domain(barData)
-            .range([0, width])
-            .paddingInner(0.1);
+            .domain([0, d3.max(data) + barOffset])
+            .range([0, height]),
+        xScale = d3.scaleBand().domain(data).range([0, width]);
 
-        d3.select('#canvasHistogram')
-            .append('svg')
-            .attr('width', width)
-            .attr('height', height)
-            .style('background', '#C9D7D6')
-
-            .selectAll('rect')
-            .data(BARS)
+    d3.select('svg')
+        .selectAll('rect-' + colour)
+        .data(data)
+        .enter()
+        .append('rect')
+        .attr('fill', colour)
+        .attr('opacity', 0.3)
+        .attr('width', function (d) {
+            return xScale.bandwidth();
+        })
+        .attr('height', function (d) {
+            return yScale(d);
+        })
+        .attr('x', function (d, i) {
+            return xScale(d);
+        })
+        .attr('y', function (d) {
+            return height - yScale(d);
+        });
+}
+/*.selectAll('rect')
+            .data(data)
             .enter()
             .append('rect')
             .attr('fill', 'gray')
+            .style('stroke-opacity', 0.3)
             .attr('width', function (d) {
                 return xScale.bandwidth();
             })
@@ -126,6 +149,4 @@ function drawHistogram(barData) {
             })
             .attr('y', function (d) {
                 return height - yScale(d);
-            });
-    }
-}
+            });*/
