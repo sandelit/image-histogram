@@ -4,14 +4,27 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Image Histogram</title>
-        <script src="../js/jquery-3.5.1.min.js"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto&display=swap"
+            rel="stylesheet"
+        />
         <script src="../js/d3.v4.js"></script>
         <script src="../js/input.js" defer></script>
         <link rel="stylesheet" href="../css/style.css" />
     </head>
     <body>
-        <canvas id="canvasImage"> </canvas>
+        <div class="header">
+            <h1>Input an image to see how its colours are distributed!</h1>
+        </div>
+        <div class="fileUpload btn btn-primary">
+            <input
+                class="upload"
+                id="imageInput"
+                type="file"
+                name="imageInput"
+            />
+        </div>
         <div id="canvasHistogram"></div>
-        <input id="imageInput" type="file" name="imageInput" />
+        <canvas id="canvasImage"> </canvas>
     </body>
 </html>

@@ -1,3 +1,73 @@
-#canvasImage {
-    background-color: lightgray;
+body {
+    background-color: white;
+}
+
+h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 50px;
+    width: 40%;
+    margin: 0 auto;
+    text-align: center;
+    color: white;
+}
+
+canvas {
+    display: block;
+    margin: 100px auto;
+}
+div.tooltip {
+    position: absolute;
+    text-align: center;
+    width: 60px;
+    height: 28px;
+    padding: 2px;
+    font: 12px sans-serif;
+    background-color: white;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
+}
+
+#shadow {
+    box-shadow: 5px 10px 8px #888888;
+}
+
+#border {
+    border: 2px black solid;
+}
+
+#canvasHistogram {
+    width: 50%;
+    margin: 0 auto;
+}
+
+#imageInput {
+    color: white;
+    background-color: green;
+    padding: 20px;
+}
+
+.fileUpload {
+    position: relative;
+    overflow: hidden;
+    margin: 10px;
+    margin: 0 auto;
+    text-align: center;
+    width: 100%;
+}
+
+.fileUpload input.upload {
+    margin: 0 auto 50px auto;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    width: 400px;
+    border-radius: 7px;
+}
+
+.header {
+    background-color: green;
+    padding: 20px 0 20px 0;
+    border-radius: 5px;
+    margin-bottom: 50px;
 }
