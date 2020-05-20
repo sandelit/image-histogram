@@ -1,2 +1,1 @@
-# Photo-histogram
-
+# Image-histogram

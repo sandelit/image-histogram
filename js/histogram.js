@@ -1,4 +1,5 @@
 window.onload = drawHistogram();
+
 // Creates canvas and checks for file input
 const inputImage = document.getElementById('imageInput');
 const canvas = document.getElementById('canvasImage');
@@ -40,8 +41,35 @@ function handleData(data) {
         green[data[i + 1]]++;
         blue[data[i + 2]]++;
     }
+
     drawHistogram({ red, green, blue });
 }
+
+////////////////////
+//Work in progress//
+////////////////////
+/*function dataToBins(data) {
+    const frequencies = [];
+    let bins = [],
+        bin = 0;
+    for (let i = 0; i < 256; i += 2) {
+        bins.push(i + '-' + (i + 1));
+    }
+    const binSize = 2,
+        binAmounts = bins.length;
+
+    for (i = 0; i < binAmounts; i++) {
+        let freq = 0;
+        for (j = 0; j < data.length; j++) {
+            if (data[j] >= bin && data[j] < bin + binSize) {
+                freq++;
+            }
+        }
+        bin += binSize;
+        frequencies.push(freq);
+    }
+    return frequencies;
+}*/
 
 function isBlackWhite(data) {
     if (
@@ -85,15 +113,21 @@ function drawSVG() {
 function drawBars(data, color) {
     let dataArr = [];
     dataArr = Object.values(data);
+    dataArrGroup = [];
+
+    for (let i = 0; i < dataArr.length; i += 2) {
+        dataArrGroup.push(dataArr[i] + dataArr[i + 1]);
+    }
+
     const height = window.innerHeight / 2,
         width = window.innerWidth / 2,
         barOffset = 5;
 
     const yScale = d3
         .scaleLinear()
-        .domain([0, d3.max(dataArr) + barOffset])
+        .domain([0, d3.max(dataArrGroup) + barOffset])
         .range([0, height]);
-    const xScale = d3.scaleBand().domain(dataArr).range([0, width]);
+    const xScale = d3.scaleBand().domain(dataArrGroup).range([0, width]);
 
     switch (color) {
         case 'red':
@@ -109,7 +143,10 @@ function drawBars(data, color) {
             colorRange = ['#000000', '#CCCCCC'];
             break;
     }
-    let colors = d3.scaleLinear().domain([0, 255]).range(colorRange);
+    let colors = d3
+        .scaleLinear()
+        .domain([0, dataArrGroup.length])
+        .range(colorRange);
     let tempColor;
     let tooltip = d3
         .select('body')
@@ -121,7 +158,7 @@ function drawBars(data, color) {
         .select('svg')
         .append('g')
         .selectAll('rect-' + color)
-        .data(dataArr)
+        .data(dataArrGroup)
         .enter()
         .append('rect')
         .style('opacity', 0.33)
